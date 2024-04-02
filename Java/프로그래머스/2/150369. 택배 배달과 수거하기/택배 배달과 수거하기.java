@@ -7,10 +7,6 @@ class Plan {
         this.position = position;
         this.amount = amount;
     }
-    
-    public String toString() {
-        return "(" + this.position + ", " + this.amount + ")";
-    }
 }
 
 class Schedule {
@@ -29,16 +25,6 @@ class Schedule {
                 p = new Plan(i + 1, pickups[i]);
                 pickupsq.add(p);
             }
-        }
-    }
-    
-    public void print() {
-        for (int i = deliveriesq.size() - 1; i >= 0; i--) {
-            System.out.println(deliveriesq.get(i));
-        }
-        System.out.println("------------");
-        for (int i = pickupsq.size() - 1; i >= 0; i--) {
-            System.out.println(pickupsq.get(i));
         }
     }
     
