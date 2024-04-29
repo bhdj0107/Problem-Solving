@@ -28,6 +28,7 @@ class Node {
 
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     public static void main(String[] args) throws IOException {
         int N = Integer.parseInt(br.readLine());
         Node[] nodes = new Node[N + 1];
@@ -42,6 +43,10 @@ public class Main {
             nodes[dst].addConnection(nodes[src]);
         }
         nodes[1].setChildrensParent();
-        for (int i = 2; i < N + 1; i++) System.out.println(nodes[i].parent.value);        
+        for (int i = 2; i < N + 1; i++) {
+            bw.write(nodes[i].parent.value + "\n");
+        }
+        bw.flush();
+        bw.close(); 
     }
 }
