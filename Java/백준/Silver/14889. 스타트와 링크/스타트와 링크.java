@@ -58,7 +58,7 @@ public class Main {
 
     static void backtracking(int depth) {
         if (depth == N) {
-            int diff = absDiff(teamA.score, teamB.score);
+            int diff = Math.abs(teamA.score-teamB.score);
             if (minDiff > diff) minDiff = diff;
         }
         else {
@@ -75,10 +75,5 @@ public class Main {
                 teamB.removeLastMember();
             }
         }
-    }
-
-    static int absDiff(int a, int b) {
-        if (a > b) return a - b;
-        else return b - a;
     }
 }
