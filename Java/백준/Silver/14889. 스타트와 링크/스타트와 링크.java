@@ -2,35 +2,40 @@ import java.io.*;
 import java.util.*;
 
 class Team {
-    public ArrayList<Integer> Members = new ArrayList<>();
+    public int[] Members;
+    public int size = 0;
     public int score = 0;
-    public HashMap<Integer,Integer> member2score = new HashMap<>(); 
+    public int[] member2score; 
     public int[][] scoreTable;
-    Team (int[][] scoreTable) {
+    Team (int[][] scoreTable, int maxSize) {
         this.scoreTable = scoreTable;
+        this.Members = new int[maxSize];
+        this.member2score = new int[maxSize];
     }
 
     public void addMember(Integer member) {
         int thisScore = 0;
-        for (int i = 0; i < Members.size(); i++) {
-            int another = Members.get(i);
+        this.Members[this.size] = member;
+        
+
+        for (int i = 0; i < this.size; i++) {
+            int another = Members[i];
             thisScore += this.scoreTable[member][another];
             thisScore += this.scoreTable[another][member];
         }
-        this.Members.add(member);
-        member2score.put(member, thisScore);
+
+        this.member2score[this.size] = thisScore;
+        this.size += 1;
         this.score += thisScore;
     }
 
     public void removeLastMember() {
-        int lastMember = this.Members.get(this.size() - 1);
-        this.Members.remove(this.size() - 1);
-        this.score -= member2score.get(lastMember);
-        member2score.remove(lastMember);
+        this.score -= member2score[this.size - 1];
+        this.size -= 1;
     }
 
     public int size() {
-        return this.Members.size();
+        return this.size;
     }
 }
 
@@ -50,8 +55,8 @@ public class Main {
             for (int j = 0 ; j < N; j++) scoreTable[i][j] = Integer.parseInt(st.nextToken());
         }
 
-        teamA = new Team(scoreTable);
-        teamB = new Team(scoreTable);
+        teamA = new Team(scoreTable, pickableCount + 1);
+        teamB = new Team(scoreTable, pickableCount + 1);
         backtracking(0);
         System.out.println(minDiff);
     }
