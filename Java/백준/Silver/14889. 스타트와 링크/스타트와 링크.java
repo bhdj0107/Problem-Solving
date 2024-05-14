@@ -41,7 +41,6 @@ class Team {
 
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static Team teamA, teamB;
     static int pickableCount;
     static int minDiff = Integer.MAX_VALUE;
