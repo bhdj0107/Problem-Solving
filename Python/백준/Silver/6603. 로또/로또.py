@@ -1,25 +1,13 @@
-from collections import deque
 import sys
-limit = 6
-temp = deque()
+from itertools import combinations
 
-def dfs(D):
-    global temp
-    if len(temp) == limit:
-        for i in range(5):
-            print(S[temp[i]], end=" ")
-        print(S[temp[5]])
+while True:
+    inp = list(map(int, sys.stdin.readline().split()))
+    N = inp[0]
+    if N == 0: break
     else:
-        for i in range(D + 1, S[0] + 1):
-            temp.append(i)
-            dfs(i)
-            temp.pop()
-
-
-
-while 1:
-    S = list(map(int, sys.stdin.readline().split()))
-    if S[0] == 0:
-        break
-    dfs(0)
-    print("")
+        nums = inp[1:]
+        for idxes in combinations(range(len(nums)), 6):
+            output = [nums[idxes[i]] for i in range(6)]
+            print(output[0],output[1],output[2],output[3],output[4],output[5])
+        print()
