@@ -1,44 +1,44 @@
 import sys
+from itertools import product
 N = int(sys.stdin.readline())
-ans = 0
-board = []
-CYPZ = ('C', 'Y', 'P', 'Z')
-for _ in range(N):
-    board.append(list(sys.stdin.readline().rstrip()))
 
-for y in range(N):
-    for x in range(N):
+def switcher(chr):
+    if chr == 'P': return 0
+    elif chr == 'C': return 1
+    elif chr == 'Z': return 2
+    elif chr == 'Y': return 3
 
-        # 가로축 교환
-        if x < N - 1:
-            board[y][x], board[y][x+1] = board[y][x+1], board[y][x]
-            t1_line = "".join(board[y])
-            t2_line = "".join(tuple(zip(*board))[x])
-            t3_line = "".join(tuple(zip(*board))[x+1])
-            board[y][x], board[y][x+1] = board[y][x+1], board[y][x]
-    
-            for i in range(2, N+1):
-                if ans > i:
-                    continue
-                for j in range(4):
-                    check = "".join([CYPZ[j] for _ in range(i)])
-                    if check in t1_line or check in t2_line or check in t3_line:
-                        ans = i
+field = [list(map(switcher, list(sys.stdin.readline().rstrip()))) for _ in range(N)]
 
-        # 세로축 교환
-        if y < N - 1:
-            board[y+1][x], board[y][x] = board[y][x], board[y+1][x]
-            t1_line = "".join(board[y])
-            t2_line = "".join(board[y+1])
-            t3_line = "".join(tuple(zip(*board))[x])
-            board[y+1][x], board[y][x] = board[y][x], board[y+1][x]
-    
-            for i in range(2, N+1):
-                if ans > i:
-                    continue
-                for j in range(4):
-                    check = "".join([CYPZ[j] for _ in range(i)])
-                    if check in t1_line or check in t2_line or check in t3_line:
-                        ans = i
+def chkLine(idx, isRow):
+    maxCnt = 1
+    if isRow:
+        currentCnt = 1
+        for i in range(1, N):
+            if field[idx][i] != field[idx][i - 1]:
+                maxCnt = max(maxCnt, currentCnt)
+                currentCnt = 1
+            else: currentCnt += 1
+        maxCnt = max(maxCnt, currentCnt)
+    else:
+        currentCnt = 1
+        for i in range(1, N):
+            if field[i][idx] != field[i - 1][idx]:
+                maxCnt = max(maxCnt, currentCnt)
+                currentCnt = 1
+            else: currentCnt += 1
+        maxCnt = max(maxCnt, currentCnt)
+    return maxCnt
 
-print(ans)
+maxEdibleCnt = 1
+for i in range(N):
+    for j in range(N):
+        if j < N - 1:
+            field[i][j], field[i][j + 1] = field[i][j + 1], field[i][j]
+            maxEdibleCnt = max(maxEdibleCnt, chkLine(i, True), chkLine(j, False), chkLine(j + 1, False))
+            field[i][j], field[i][j + 1] = field[i][j + 1], field[i][j]
+        if i < N - 1:
+            field[i][j], field[i + 1][j] = field[i + 1][j], field[i][j]
+            maxEdibleCnt = max(maxEdibleCnt, chkLine(j, False), chkLine(i, True), chkLine(i + 1, True))
+            field[i][j], field[i + 1][j] = field[i + 1][j], field[i][j]
+print(maxEdibleCnt)
