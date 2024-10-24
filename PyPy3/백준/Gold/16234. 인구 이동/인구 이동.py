@@ -10,18 +10,17 @@ class World:
         self.N = len(countries)
         self.L = L
         self.R = R
-        self.barrierHash = {}
+        self.barrierStatus = defaultdict(set)
     
     def movePopulation(self):
+        countries = []
         visited = set()
-        isSwapped = False
         
         for i in range(self.N):
             for j in range(self.N):
                 if (i, j) in visited: continue
                 else:
                     q = deque()
-                    total = 0
                     connected = []
                     q.append((i, j))
                     while q:
@@ -29,35 +28,47 @@ class World:
                         if now in visited: continue
                         visited.add(now)
                         connected.append(now)
-                        total += self.countries[now[0]][now[1]]
                         for k in range(4):
                             ny, nx = now[0] + d[k][0], now[1] + d[k][1]
                             if 0 <= ny < N and 0 <= nx < N: 
-                                if self.isBarrierCanOpen(now, (ny, nx)):
+                                if (ny, nx) in self.barrierStatus[now]:
                                     q.append((ny, nx))
                                     
-                    if len(connected) > 1:
-                        isSwapped = True
-                        total = total // len(connected)
-                        for country in connected: self.countries[country[0]][country[1]] = total
-                        
-        self.barrierHash = {}
-        return isSwapped
+                    if len(connected) > 1: countries.append(connected)
+        for block in countries:
+            total = 0
+            for country in block: total += self.countries[country[0]][country[1]]
+            total //= len(block)
+            for country in block: self.countries[country[0]][country[1]] = total
+                             
+        
+    def resetBarrier(self):
+        self.barrierStatus = defaultdict(set)
+        for i in range(self.N):
+            for j in range(self.N):
+                self.openBarrier((i, j))
     
+        
+    def openBarrier(self, src):
+        for i in range(2, 4):
+            neighbor = src[0] + d[i][0], src[1] + d[i][1]
+            if not (0 <= neighbor[0] < self.N and 0 <= neighbor[1] < self.N): continue
+            if self.isBarrierCanOpen(src, neighbor):
+                self.barrierStatus[src].add(neighbor)
+                self.barrierStatus[neighbor].add(src)
+
+        
     def isBarrierCanOpen(self, src, dst):
-        if self.barrierHash.get((src, dst)): return self.barrierHash.get((src, dst))
-        
         diff = abs(self.countries[src[0]][src[1]] - self.countries[dst[0]][dst[1]])
-        ret = self.L <= diff <= self.R
-        self.barrierHash[(src, dst)] = ret
-        self.barrierHash[(dst, src)] = ret
-        
-        return ret
-        
+        if self.L <= diff <= self.R: return True
+        else: return False
 
 cnt = 0
 world = World(countries, L, R)
 while True:
-    if not world.movePopulation(): break
-    cnt += 1
+    world.resetBarrier()
+    if len(world.barrierStatus):
+        cnt += 1
+        world.movePopulation()
+    else: break
 print(cnt)
