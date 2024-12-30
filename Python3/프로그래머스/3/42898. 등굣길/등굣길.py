@@ -1,5 +1,5 @@
 def solution(m, n, puddles):
-    field = [[0 for _ in range(m + 1)] for _ in range(n + 1)]
+    field = [[0] * (m + 1) for _ in range(n + 1)]
     field[1][1] = 1
     
     puddles = set(map(tuple, puddles))
